@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": false,
+        "target": "es5",
+        "sourceMap": false,
+        "noImplicitAny": false,
+    },
+    "compileOnSave": true,
+    "awesomeTypescriptLoaderOptions": {
+        
+    },
+    "files": [
+        "./src/SnakeGame.ts"
+    ],
+    "exclude": [
+        "./src/**/*.test.ts"
+    ],
+}
