@@ -5,3 +5,5 @@
 #### Technologies ####
 
 Built with HTML5, CSS3, JavaScript, Typescript, Webpack
+
+#### Status: In Development ####

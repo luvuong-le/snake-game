@@ -15,6 +15,7 @@
     "awesome-typescript-loader": "^5.2.0",
     "chai": "^4.1.2",
     "css-loader": "^0.28.11",
+    "hoek": "^5.0.3",
     "mini-css-extract-plugin": "^0.4.0",
     "mocha": "^5.2.0",
     "node-sass": "^4.9.0",
