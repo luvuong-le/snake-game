@@ -19,6 +19,7 @@ export default class SnakeBoard {
 	snake: Snake;
 	board: SnakeBoardInterface;
 	context: CanvasRenderingContext2D;
+	boardInterval: any;
 
 	constructor () {
 		this.gameboard = <HTMLCanvasElement> document.getElementById('gameboard');
@@ -46,32 +47,92 @@ export default class SnakeBoard {
 		this.context.clearRect(0, 0, this.gameboard.width, this.gameboard.height);
 	}
 
-	checkBoundaries() {
-		if (this.snake.getXPosition() >= this.board.XBoundary ||
-			this.snake.getYPosition() >= this.board.YBoundary) {
+	outOfBoardX() {
+		if (this.isOutBoardLeft() || this.isOutBoardRight()) {
 			return true;
 		}
 		return false;
 	}
 
+	checkBoundaries() {
+		if (this.snake.getXPosition() > this.board.XBoundary || this.snake.getXPosition() < 0) {
+			return true;
+		}
+		if (this.snake.getYPosition() > this.board.YBoundary || this.snake.getYPosition() < 0) {
+			return true;
+		}
+		return false;
+	}
+
+	isOutBoardRight() {
+		return (this.snake.getXPosition() > this.board.XBoundary && this.snake.getXPosition() >= this.board.XBoundary + (constants.SNAKE_PIECE_WIDTH * this.snake.body.length)) ? true : false;
+	}
+
+	isOutBoardLeft() {
+		return (this.snake.getXPosition() < 0 && this.snake.getXPosition() <= (0 - constants.SNAKE_PIECE_WIDTH * this.snake.body.length)) ? true : false;
+	}
+
+	outOfBoardY() {
+		if (this.isOutBoardDown() || this.isOutBoardUp()) {
+			return true;
+		}
+		return false;
+	}
+
+	isOutBoardDown() {
+		return (this.snake.getYPosition() > this.board.YBoundary && this.snake.getYPosition() >= this.board.YBoundary + constants.SNAKE_PIECE_HEIGHT * this.snake.body.length) ? true : false;
+	}
+
+	isOutBoardUp() {
+		return (this.snake.getYPosition() < 0 && this.snake.getYPosition() <= (0 - constants.SNAKE_PIECE_HEIGHT * this.snake.body.length)) ? true : false;
+	}
+
 	setGameContext() {
         this.context = this.gameboard.getContext('2d');
         this.board = {
-            XBoundary: this.gameboard.width - constants.SNAKE_PIECE_WIDTH,
-            YBoundary: this.gameboard.height - constants.SNAKE_PIECE_HEIGHT,
+            XBoundary: this.gameboard.width,
+            YBoundary: this.gameboard.height,
         }
+	}
+
+	addListeners() {
+		window.addEventListener("keydown", (e) => {
+			if (!this.checkBoundaries()) {
+				console.log(true);
+				switch (e.keyCode) {
+					case constants.RIGHT_KEY:
+						this.snake.updateDirection("RIGHT");
+						break;
+					case constants.LEFT_KEY: 
+						this.snake.updateDirection("LEFT");
+						break;
+					case constants.DOWN_KEY: 
+						this.snake.updateDirection("DOWN");
+						break;
+					case constants.UP_KEY:
+						this.snake.updateDirection("UP");
+						break;
+				}
+			}
+		});
 	}
 
 	createSnake() {
 		this.snake = new Snake();
-		setInterval(() => {
-			//this.snake.moveForward();
+		this.snake.start();
+		this.boardInterval = setInterval(() => {
+			if (this.outOfBoardX() || this.outOfBoardY()) {
+				this.snake.clearX();
+				this.snake.clearY();
+				this.clearCanvas();
+			}
 			this.drawSnake();
-		}, constants.SNAKE_SPEED);
+		}, constants.SNAKE_SPEED);	
 	}
 
 	init() {
 		this.setGameContext();
 		this.createSnake();
+		this.addListeners();
 	}
 }
