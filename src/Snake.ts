@@ -13,6 +13,8 @@ export default class Snake {
 
     constructor() {
         this.body = [
+            { x: 120, y: 150 },
+            { x: 100, y: 150 },
             { x: 80, y: 150 },
             { x: 60, y: 150 },
             { x: 40, y: 150 },
@@ -33,6 +35,13 @@ export default class Snake {
         this.moveInterval = setInterval(() => {
             moveFunction();
         }, constants.SNAKE_SPEED);
+    }
+
+    checkCollision() {
+        let temp = this.body.slice(1, this.body.length);
+        return temp.some((snakePiece) => {
+            return this.body[0].x === snakePiece.x && this.body[0].y === snakePiece.y;
+        })
     }
 
     updateDirection(direction) {
@@ -101,21 +110,33 @@ export default class Snake {
 
     clearX() {
         if (this.currentDirection === "RIGHT") {
-            this.body.forEach((snake) => snake.x = 0); 
+            // this.body.forEach((snake) => snake.x = 0);
+            for (let i = 0; i < this.body.length; i++) {
+                this.body[0].x = 0 - (20 * i);
+            }
         }
 
         if (this.currentDirection === "LEFT") {
-            this.body.forEach(snake => snake.x = 600); 
+            // this.body.forEach(snake => snake.x = 600);
+            for (let i = 0; i < this.body.length; i++) {
+                this.body[0].x = 600 + (20 * i);
+            } 
         }
     }
 
     clearY() {
         if (this.currentDirection === "DOWN") {
-            this.body.forEach((snake) => snake.y = 0);
+            // this.body.forEach((snake) => snake.y = 0);
+            for (let i = 0; i < this.body.length; i++) {
+                this.body[0].y = 0 - (20 * i);
+            }
         }
 
         if (this.currentDirection === "UP") {
-            this.body.forEach(snake => snake.y = 600);
+            // this.body.forEach(snake => snake.y = 600);
+            for (let i = 0; i < this.body.length; i++) {
+                this.body[0].y = 600 + (20 * i);
+            }
         }
     }
 

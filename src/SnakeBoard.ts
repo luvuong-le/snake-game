@@ -9,12 +9,7 @@ interface SnakeBoardInterface {
 }
 
 export default class SnakeBoard {
-	// Going Right x +20
-	// Going Left x -20
-
-	// Goin up y - 20
-	// Going Down y + 20
-
+	
 	gameboard: HTMLCanvasElement;
 	snake: Snake;
 	board: SnakeBoardInterface;
@@ -95,36 +90,17 @@ export default class SnakeBoard {
         }
 	}
 
-	addListeners() {
-		window.addEventListener("keydown", (e) => {
-			if (!this.checkBoundaries()) {
-				console.log(true);
-				switch (e.keyCode) {
-					case constants.RIGHT_KEY:
-						this.snake.updateDirection("RIGHT");
-						break;
-					case constants.LEFT_KEY: 
-						this.snake.updateDirection("LEFT");
-						break;
-					case constants.DOWN_KEY: 
-						this.snake.updateDirection("DOWN");
-						break;
-					case constants.UP_KEY:
-						this.snake.updateDirection("UP");
-						break;
-				}
-			}
-		});
-	}
-
 	createSnake() {
 		this.snake = new Snake();
 		this.snake.start();
 		this.boardInterval = setInterval(() => {
-			if (this.outOfBoardX() || this.outOfBoardY()) {
+			if (this.outOfBoardX()) {
 				this.snake.clearX();
-				this.snake.clearY();
 				this.clearCanvas();
+			}
+			if (this.outOfBoardY()) {
+				this.snake.clearY();
+				this.clearCanvas();			
 			}
 			this.drawSnake();
 		}, constants.SNAKE_SPEED);	
@@ -133,6 +109,5 @@ export default class SnakeBoard {
 	init() {
 		this.setGameContext();
 		this.createSnake();
-		this.addListeners();
 	}
 }
