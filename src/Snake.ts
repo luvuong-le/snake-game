@@ -10,19 +10,26 @@ export default class Snake {
     body: Array<SnakeBody>
     currentDirection: string
     moveInterval: any
+    collided: boolean;
+    changingDirection: boolean;
 
     constructor() {
         this.body = [
-            { x: 120, y: 150 },
-            { x: 100, y: 150 },
-            { x: 80, y: 150 },
-            { x: 60, y: 150 },
-            { x: 40, y: 150 },
-            { x: 20, y: 150 },
-            { x: 0, y: 150 }
+            { x: 180, y: 160 },
+            { x: 160, y: 160 },
+            { x: 140, y: 160 },
+            { x: 120, y: 160 },
+            { x: 100, y: 160 },
+            { x: 80, y: 160 },
+            { x: 60, y: 160 },
+            { x: 40, y: 160 },
+            { x: 20, y: 160 },
+            { x: 0, y: 160 }
         ];
 
         this.currentDirection = constants.CURRENT_DIRECTION;
+        this.collided = false;
+        this.changingDirection = false;
     }
 
     start() {
@@ -38,17 +45,24 @@ export default class Snake {
     }
 
     checkCollision() {
-        let temp = this.body.slice(1, this.body.length);
-        return temp.some((snakePiece) => {
-            return this.body[0].x === snakePiece.x && this.body[0].y === snakePiece.y;
-        })
+        const collision = this.body.slice(1, this.body.length).some(snakePiece => {
+			return this.body[0].x === snakePiece.x && this.body[0].y === snakePiece.y;
+        });
+
+        if (collision) {
+            this.collided = true;
+        }
     }
 
     updateDirection(direction) {
+        if (this.changingDirection) return;
+
+        this.changingDirection = true;
+
         clearInterval(this.moveInterval);
         this.currentDirection = direction;
 
-        switch (this.currentDirection) {
+        switch (direction) {
             case "RIGHT":
                 this.setMoveInterval(this.moveForward.bind(this));
                 break;
@@ -71,6 +85,7 @@ export default class Snake {
         };
         this.body.unshift(head);
         this.body.pop();
+        this.checkCollision();
     }
 
     moveBackward() {
@@ -84,6 +99,7 @@ export default class Snake {
         };
         this.body.unshift(head);
         this.body.pop();
+        this.checkCollision();
     }
 
     moveForwardY() {
@@ -93,6 +109,7 @@ export default class Snake {
         };
         this.body.unshift(head);
         this.body.pop();
+        this.checkCollision();
     }
 
     moveBackwardY() {
@@ -106,6 +123,7 @@ export default class Snake {
         };
         this.body.unshift(head);
         this.body.pop();
+        this.checkCollision();
     }
 
     clearX() {

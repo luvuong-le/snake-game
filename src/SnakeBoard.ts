@@ -1,4 +1,5 @@
 import constants from './constants';
+import { random } from './util';
 import SnakePiece from './SnakePiece';
 import Snake from './Snake';
 
@@ -8,6 +9,11 @@ interface SnakeBoardInterface {
 	YBoundary: number,
 }
 
+interface SnakeFood {
+	x: number;
+	y: number;
+}
+
 export default class SnakeBoard {
 	
 	gameboard: HTMLCanvasElement;
@@ -15,9 +21,12 @@ export default class SnakeBoard {
 	board: SnakeBoardInterface;
 	context: CanvasRenderingContext2D;
 	boardInterval: any;
+	foodEaten: boolean;
+	food: Array<SnakeFood>;
 
 	constructor () {
 		this.gameboard = <HTMLCanvasElement> document.getElementById('gameboard');
+		this.food = [];
 	}
     
 	createSnakePiece(x, y) {
@@ -28,6 +37,12 @@ export default class SnakeBoard {
 		this.clearCanvas();
 		this.snake.body.forEach(snake => {
 			this.drawSnakePiece(this.createSnakePiece(snake.x, snake.y));
+		});
+	}
+
+	drawFoodPiece() {
+		this.food.forEach(food => {
+			this.drawSnakePiece(food);
 		});
 	}
 
@@ -93,6 +108,7 @@ export default class SnakeBoard {
 	createSnake() {
 		this.snake = new Snake();
 		this.snake.start();
+		this.createSnakeFood();
 		this.boardInterval = setInterval(() => {
 			if (this.outOfBoardX()) {
 				this.snake.clearX();
@@ -103,7 +119,13 @@ export default class SnakeBoard {
 				this.clearCanvas();			
 			}
 			this.drawSnake();
+			this.drawFoodPiece();
 		}, constants.SNAKE_SPEED);	
+	}
+
+	createSnakeFood() {
+		this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
+		this.drawFoodPiece();
 	}
 
 	init() {

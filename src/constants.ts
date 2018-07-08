@@ -7,6 +7,6 @@ export default {
     SNAKE_PIECE_HEIGHT: 20,
     SNAKE_COLOR: 'red',
     STROKE_COLOR: '#000',
-    SNAKE_SPEED: 100,
+    SNAKE_SPEED: 80,
     CURRENT_DIRECTION: "RIGHT",
 };

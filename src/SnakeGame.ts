@@ -18,6 +18,9 @@ class SnakeGame {
     addListeners() {
         window.addEventListener("keydown", (e) => {
             if (!this.snakeBoard.checkBoundaries()) {
+                setTimeout(() => {
+                    this.snakeBoard.snake.changingDirection = false;
+                }, 100);
                 switch (e.keyCode) {
                     case constants.RIGHT_KEY:
                         if (this.snakeBoard.snake.currentDirection !== "LEFT") {
@@ -53,21 +56,17 @@ class SnakeGame {
     init() {
         this.gameTracker = setInterval(() => {
             if (!this.snakeBoard.checkBoundaries()) {
-                if (this.snakeBoard.snake.checkCollision()) {
+                if (this.snakeBoard.snake.collided) {
                     this.gameOver = true;
-                }
-
-                if (this.gameOver) {
                     this.gameFinish();
                 }
-
             }
         }, constants.SNAKE_SPEED);
     }
 
     start() {
-        this.init();
         this.snakeBoard.init();
+        this.init();
         this.addListeners();
     }
 }
