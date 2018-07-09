@@ -4,7 +4,10 @@ interface SnakeBody {
     x: number
     y: number
 }
-
+interface SnakeFood {
+    x: number;
+    y: number;
+}
 export default class Snake {
 
     body: Array<SnakeBody>
@@ -12,17 +15,11 @@ export default class Snake {
     moveInterval: any
     collided: boolean;
     changingDirection: boolean;
+    food: Array<SnakeFood>;
+    speed: number;
 
     constructor() {
         this.body = [
-            { x: 180, y: 160 },
-            { x: 160, y: 160 },
-            { x: 140, y: 160 },
-            { x: 120, y: 160 },
-            { x: 100, y: 160 },
-            { x: 80, y: 160 },
-            { x: 60, y: 160 },
-            { x: 40, y: 160 },
             { x: 20, y: 160 },
             { x: 0, y: 160 }
         ];
@@ -30,18 +27,19 @@ export default class Snake {
         this.currentDirection = constants.CURRENT_DIRECTION;
         this.collided = false;
         this.changingDirection = false;
+        this.speed = 80;
     }
 
     start() {
         this.moveInterval = setInterval(() => {
             this.moveForward();
-        }, constants.SNAKE_SPEED);
+        }, this.speed);
     }
 
     setMoveInterval(moveFunction) {
         this.moveInterval = setInterval(() => {
             moveFunction();
-        }, constants.SNAKE_SPEED);
+        }, this.speed);
     }
 
     checkCollision() {
@@ -52,6 +50,14 @@ export default class Snake {
         if (collision) {
             this.collided = true;
         }
+    }
+
+    appendFood(food) {
+        const foodPiece = {
+            x: food.x,
+            y: food.y
+        }
+        this.body.unshift(foodPiece);
     }
 
     updateDirection(direction) {

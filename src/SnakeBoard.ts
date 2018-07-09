@@ -42,15 +42,22 @@ export default class SnakeBoard {
 
 	drawFoodPiece() {
 		this.food.forEach(food => {
-			this.drawSnakePiece(food);
+			this.drawSnakeFoodPiece(food);
 		});
+	}
+
+	drawSnakeFoodPiece(food) {
+		this.context.fillStyle = constants.SNAKE_FOOD_COLOR;
+		this.context.strokeStyle = constants.STROKE_COLOR;
+		this.context.fillRect(food.x, food.y, food.width, food.height);
+		// this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
 	}
 
 	drawSnakePiece(snake) {
 		this.context.fillStyle = constants.SNAKE_COLOR;
 		this.context.strokeStyle = constants.STROKE_COLOR;
 		this.context.fillRect(snake.x, snake.y, snake.width, snake.height);
-		this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
+		// this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
     }
     
 	clearCanvas() {
@@ -65,10 +72,10 @@ export default class SnakeBoard {
 	}
 
 	checkBoundaries() {
-		if (this.snake.getXPosition() > this.board.XBoundary || this.snake.getXPosition() < 0) {
+		if (this.snake.getXPosition() >= this.board.XBoundary + constants.SNAKE_SIZE || this.snake.getXPosition() <= 0) {
 			return true;
 		}
-		if (this.snake.getYPosition() > this.board.YBoundary || this.snake.getYPosition() < 0) {
+		if (this.snake.getYPosition() >= this.board.YBoundary + constants.SNAKE_SIZE || this.snake.getYPosition() <= 0) {
 			return true;
 		}
 		return false;
@@ -105,22 +112,39 @@ export default class SnakeBoard {
         }
 	}
 
-	createSnake() {
-		this.snake = new Snake();
-		this.snake.start();
-		this.createSnakeFood();
+	checkFoodCollision() {
+		return (this.snake.body[0].x === this.food[0].x && this.snake.body[0].y === this.food[0].y) ? true : false;
+	}
+
+	setBoardInterval() {
 		this.boardInterval = setInterval(() => {
+			if (this.checkFoodCollision()) {
+				this.context.clearRect(this.food[0].x, this.food[0].y, constants.SNAKE_PIECE_WIDTH, constants.SNAKE_PIECE_WIDTH);
+				this.snake.appendFood(this.food[0]);
+				this.food = [];
+				this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
+				clearInterval(this.boardInterval);
+				this.snake.speed -= 2;
+				this.setBoardInterval();
+			}
 			if (this.outOfBoardX()) {
 				this.snake.clearX();
 				this.clearCanvas();
 			}
 			if (this.outOfBoardY()) {
 				this.snake.clearY();
-				this.clearCanvas();			
+				this.clearCanvas();
 			}
 			this.drawSnake();
 			this.drawFoodPiece();
-		}, constants.SNAKE_SPEED);	
+		}, this.snake.speed);	
+	}
+
+	createSnake() {
+		this.snake = new Snake();
+		this.snake.start();
+		this.createSnakeFood();
+		this.setBoardInterval();
 	}
 
 	createSnakeFood() {

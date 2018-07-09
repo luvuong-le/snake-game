@@ -8,42 +8,52 @@ class SnakeGame {
     score: number;
     gameOver: boolean;
     gameTracker: any;
+    keyPressed: boolean;
 
     constructor () {
         this.snakeBoard = new SnakeBoard();
         this.gameOver = false;
         this.gameTracker = null;
+        this.keyPressed = false;
     }
 
     addListeners() {
         window.addEventListener("keydown", (e) => {
+            if (this.keyPressed) return; 
+
+            this.keyPressed = true; 
+
             if (!this.snakeBoard.checkBoundaries()) {
                 setTimeout(() => {
                     this.snakeBoard.snake.changingDirection = false;
-                }, 100);
+                }, 80);
                 switch (e.keyCode) {
                     case constants.RIGHT_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== "LEFT") {
-                            this.snakeBoard.snake.updateDirection("RIGHT");
+                        if (this.snakeBoard.snake.currentDirection !== constants.LEFT) {
+                            this.snakeBoard.snake.updateDirection(constants.RIGHT);
                         }
                         break;
                     case constants.LEFT_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== "RIGHT") {
-                            this.snakeBoard.snake.updateDirection("LEFT");
-                        }
+                        if (this.snakeBoard.snake.currentDirection !== constants.RIGHT) {
+                            this.snakeBoard.snake.updateDirection(constants.LEFT);
+						}
                         break;
                     case constants.DOWN_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== "UP") {
-                            this.snakeBoard.snake.updateDirection("DOWN");
+                        if (this.snakeBoard.snake.currentDirection !== constants.UP) {
+                            this.snakeBoard.snake.updateDirection(constants.DOWN);
                         }
                         break;
                     case constants.UP_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== "DOWN") {
-                            this.snakeBoard.snake.updateDirection("UP");
+                        if (this.snakeBoard.snake.currentDirection !== constants.DOWN) {
+                            this.snakeBoard.snake.updateDirection(constants.UP);
                         }
                         break;
                 }
             }
+        });
+
+        window.addEventListener('keyup', () => {
+            this.keyPressed = false;
         });
     }
 
@@ -61,7 +71,7 @@ class SnakeGame {
                     this.gameFinish();
                 }
             }
-        }, constants.SNAKE_SPEED);
+        }, this.snakeBoard.snake.speed);
     }
 
     start() {
