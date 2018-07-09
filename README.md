@@ -8,9 +8,10 @@ The game works as any old classic snake game, however where some games out there
 
 The rest of the rules are similar to the traditional snake game.
 
+You will lose if the snake touches any part of its body.
+
 #### Technologies ####
 
-Built with HTML5, CSS3, JavaScript, Typescript, Webpack
+Built with HTML5, CSS3, JavaScript, Typescript, Webpack, BrowserSync
 
-Game Board:
 ![alt text](./src/game_images/game.png "Logo Title Text 1")
