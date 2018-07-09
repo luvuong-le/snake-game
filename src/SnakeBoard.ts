@@ -18,15 +18,16 @@ export default class SnakeBoard {
 	
 	gameboard: HTMLCanvasElement;
 	snake: Snake;
+	score: number;
 	board: SnakeBoardInterface;
 	context: CanvasRenderingContext2D;
 	boardInterval: any;
-	foodEaten: boolean;
 	food: Array<SnakeFood>;
 
 	constructor () {
 		this.gameboard = <HTMLCanvasElement> document.getElementById('gameboard');
 		this.food = [];
+		this.score = 0;
 	}
     
 	createSnakePiece(x, y) {
@@ -125,6 +126,7 @@ export default class SnakeBoard {
 				this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
 				clearInterval(this.boardInterval);
 				this.snake.speed -= 2;
+				this.score += 50;
 				this.setBoardInterval();
 			}
 			if (this.outOfBoardX()) {
