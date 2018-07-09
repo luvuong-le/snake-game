@@ -42,31 +42,20 @@ export default class SnakeBoard {
 		return new SnakePiece(x, y);
 	}
 
-	drawSnake() {
+	repaintElements() {
 		this.clearCanvas();
 		this.snake.body.forEach(snake => {
-			this.drawSnakePiece(this.createSnakePiece(snake.x, snake.y));
+			this.drawSnakePiece(this.createSnakePiece(snake.x, snake.y), constants.SNAKE_COLOR);
 		});
-	}
-
-	drawFoodPiece() {
 		this.food.forEach(food => {
-			this.drawSnakeFoodPiece(food);
+			this.drawSnakePiece(food, constants.SNAKE_FOOD_COLOR);
 		});
 	}
 
-	drawSnakeFoodPiece(food) {
-		this.context.fillStyle = constants.SNAKE_FOOD_COLOR;
-		this.context.strokeStyle = constants.STROKE_COLOR;
-		this.context.fillRect(food.x, food.y, food.width, food.height);
-		// this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
-	}
-
-	drawSnakePiece(snake) {
-		this.context.fillStyle = constants.SNAKE_COLOR;
+	drawSnakePiece(snake, color) {
+		this.context.fillStyle = color;
 		this.context.strokeStyle = constants.STROKE_COLOR;
 		this.context.fillRect(snake.x, snake.y, snake.width, snake.height);
-		// this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
     }
     
 	clearCanvas() {
@@ -74,10 +63,7 @@ export default class SnakeBoard {
 	}
 
 	outOfBoardX() {
-		if (this.isOutBoardLeft() || this.isOutBoardRight()) {
-			return true;
-		}
-		return false;
+		return (this.isOutBoardLeft() || this.isOutBoardRight()) ? true : false;
 	}
 
 	checkBoundaries() {
@@ -99,10 +85,7 @@ export default class SnakeBoard {
 	}
 
 	outOfBoardY() {
-		if (this.isOutBoardDown() || this.isOutBoardUp()) {
-			return true;
-		}
-		return false;
+		return (this.isOutBoardDown() || this.isOutBoardUp()) ? true : false;
 	}
 
 	isOutBoardDown() {
@@ -126,19 +109,23 @@ export default class SnakeBoard {
 		return (this.snake.body[0].x === this.food[0].x && this.snake.body[0].y === this.food[0].y) ? true : false;
 	}
 
+	updateFoodPiece() {
+		this.context.clearRect(this.food[0].x, this.food[0].y, constants.SNAKE_PIECE_WIDTH, constants.SNAKE_PIECE_WIDTH);
+		this.snake.appendFood({ x: this.food[0].x, y: this.food[0].y });
+		this.food = [];
+		this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
+		clearInterval(this.boardInterval);
+		this.previousScore = this.score;
+		this.snake.speed -= constants.SPEED_DECREMENT;
+		this.score += constants.SCORE_DECREMENT;
+		this.updateScore();
+		this.setBoardInterval();
+	}
+
 	setBoardInterval() {
 		this.boardInterval = setInterval(() => {
 			if (this.checkFoodCollision()) {
-				this.context.clearRect(this.food[0].x, this.food[0].y, constants.SNAKE_PIECE_WIDTH, constants.SNAKE_PIECE_WIDTH);
-				this.snake.appendFood(this.food[0]);
-				this.food = [];
-				this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
-				clearInterval(this.boardInterval);
-				this.snake.speed -= constants.SPEED_DECREMENT;
-				this.previousScore = this.score;
-				this.score += constants.SCORE_DECREMENT;
-				this.updateScore();
-				this.setBoardInterval();
+				this.updateFoodPiece();
 			}
 			if (this.outOfBoardX()) {
 				this.snake.clearX();
@@ -148,21 +135,19 @@ export default class SnakeBoard {
 				this.snake.clearY();
 				this.clearCanvas();
 			}
-			this.drawSnake();
-			this.drawFoodPiece();
+			this.repaintElements();
 		}, this.snake.speed);	
 	}
 
 	createSnake() {
 		this.snake = new Snake();
-		this.snake.start();
+		this.snake.setMoveInterval(this.snake.moveForward.bind(this.snake));
 		this.createSnakeFood();
 		this.setBoardInterval();
 	}
 
 	createSnakeFood() {
-		this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
-		this.drawFoodPiece();
+		return this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
 	}
 
 	init() {

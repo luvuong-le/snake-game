@@ -1,12 +1,7 @@
 import constants from "./constants";
-
 interface SnakeBody {
     x: number
     y: number
-}
-interface SnakeFood {
-    x: number;
-    y: number;
 }
 export default class Snake {
 
@@ -15,25 +10,17 @@ export default class Snake {
     moveInterval: any
     collided: boolean;
     changingDirection: boolean;
-    food: Array<SnakeFood>;
+    food: Array<SnakeBody>;
     speed: number;
 
     constructor() {
-        this.body = [
-            { x: 20, y: 160 },
-            { x: 0, y: 160 }
-        ];
-
+        this.body = [{ x: 0, y: 160 }];
         this.currentDirection = constants.CURRENT_DIRECTION;
-        this.collided = false;
+        this.moveInterval = null;
+        this.collided = false;        
         this.changingDirection = false;
-        this.speed = 80;
-    }
-
-    start() {
-        this.moveInterval = setInterval(() => {
-            this.moveForward();
-        }, this.speed);
+        this.food = [];
+        this.speed = 85;
     }
 
     setMoveInterval(moveFunction) {
@@ -53,11 +40,7 @@ export default class Snake {
     }
 
     appendFood(food) {
-        const foodPiece = {
-            x: food.x,
-            y: food.y
-        }
-        this.body.unshift(foodPiece);
+        this.body.unshift(food);
     }
 
     updateDirection(direction) {
@@ -66,102 +49,73 @@ export default class Snake {
         this.changingDirection = true;
 
         clearInterval(this.moveInterval);
+
         this.currentDirection = direction;
 
         switch (direction) {
-            case "RIGHT":
-                this.setMoveInterval(this.moveForward.bind(this));
-                break;
-            case "LEFT":
-                this.setMoveInterval(this.moveBackward.bind(this));
-                break;
-            case "DOWN":
-                this.setMoveInterval(this.moveForwardY.bind(this));
-                break;
-            case "UP":
-                this.setMoveInterval(this.moveBackwardY.bind(this));
-                break;
-        }
+            case constants.RIGHT:
+				this.setMoveInterval(this.moveForward.bind(this));
+				break;
+			case constants.LEFT:
+				this.setMoveInterval(this.moveBackward.bind(this));
+				break;
+            case constants.DOWN:
+				this.setMoveInterval(this.moveForwardY.bind(this));
+				break;
+            case constants.UP:
+				this.setMoveInterval(this.moveBackwardY.bind(this));
+				break;
+		}
+    }
+
+    incrementBody(head) {
+        this.body.unshift(head);
+		this.body.pop();
+		this.checkCollision();
     }
 
     moveForward() {
-        const head = {
+        this.incrementBody({
             x: this.body[0].x + constants.SNAKE_PIECE_WIDTH,
             y: this.body[0].y
-        };
-        this.body.unshift(head);
-        this.body.pop();
-        this.checkCollision();
+        });
     }
 
     moveBackward() {
-        if (this.currentDirection !== "LEFT") {
-            this.currentDirection = "LEFT";
+        if (this.currentDirection !== constants.LEFT) {
+            this.currentDirection = constants.LEFT;
             this.body.reverse();
         }
-        const head = {
+        this.incrementBody({
             x: this.body[0].x - constants.SNAKE_PIECE_WIDTH,
             y: this.body[0].y
-        };
-        this.body.unshift(head);
-        this.body.pop();
-        this.checkCollision();
+        });
     }
 
     moveForwardY() {
-        const head = {
+        this.incrementBody({
             x: this.body[0].x,
             y: this.body[0].y + constants.SNAKE_PIECE_WIDTH
-        };
-        this.body.unshift(head);
-        this.body.pop();
-        this.checkCollision();
+        });
     }
 
     moveBackwardY() {
-        if (this.currentDirection !== "UP") {
-            this.currentDirection = "UP";
-            this.body.reverse();
-        }
-        const head = {
+        if (this.currentDirection !== constants.UP) {
+			this.currentDirection = constants.UP;
+			this.body.reverse();
+		}
+        this.incrementBody({
             x: this.body[0].x,
             y: this.body[0].y - constants.SNAKE_PIECE_WIDTH
-        };
-        this.body.unshift(head);
-        this.body.pop();
-        this.checkCollision();
+        });
     }
 
     clearX() {
-        if (this.currentDirection === "RIGHT") {
-            // this.body.forEach((snake) => snake.x = 0);
-            for (let i = 0; i < this.body.length; i++) {
-                this.body[0].x = 0 - (constants.SNAKE_SIZE * i);
-            }
-        }
-
-        if (this.currentDirection === "LEFT") {
-            // this.body.forEach(snake => snake.x = 600);
-            for (let i = 0; i < this.body.length; i++) {
-                this.body[0].x = 600 + (constants.SNAKE_SIZE * i);
-            } 
-        }
+        return (this.currentDirection === constants.RIGHT) ? this.body.forEach((snake, i) => snake.x = 0 - (constants.SNAKE_SIZE * i)) : this.body.forEach((snake, i) => (snake.x = 600 + constants.SNAKE_SIZE * i));
     }
 
     clearY() {
-        if (this.currentDirection === "DOWN") {
-            // this.body.forEach((snake) => snake.y = 0);
-            for (let i = 0; i < this.body.length; i++) {
-                this.body[0].y = 0 - (constants.SNAKE_SIZE * i);
-            }
-        }
-
-        if (this.currentDirection === "UP") {
-            // this.body.forEach(snake => snake.y = 600);
-            for (let i = 0; i < this.body.length; i++) {
-                this.body[0].y = 600 + (constants.SNAKE_SIZE * i);
-            }
-        }
+        return this.currentDirection === constants.DOWN ? this.body.forEach((snake, i) => (snake.y = 0 - constants.SNAKE_SIZE * i)) : this.body.forEach((snake, i) => (snake.y = 600 + constants.SNAKE_SIZE * i));
     }
 
     getXPosition() {

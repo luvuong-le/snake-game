@@ -23,9 +23,7 @@ class SnakeGame {
             this.keyPressed = true; 
 
             if (!this.snakeBoard.checkBoundaries()) {
-                setTimeout(() => {
-                    this.snakeBoard.snake.changingDirection = false;
-                }, 80);
+                setTimeout(() => this.snakeBoard.snake.changingDirection = false, 80);
                 switch (e.keyCode) {
                     case constants.RIGHT_KEY:
                         if (this.snakeBoard.snake.currentDirection !== constants.LEFT) {
@@ -51,9 +49,7 @@ class SnakeGame {
             }
         });
 
-        window.addEventListener('keyup', () => {
-            this.keyPressed = false;
-        });
+        window.addEventListener('keyup', e => this.keyPressed = false);
     }
 
     gameFinish() {

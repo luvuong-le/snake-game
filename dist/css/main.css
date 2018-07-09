@@ -21,6 +21,7 @@ body {
 .game_container__gameboard {
   background: #000;
   width: 600px;
+  max-width: 600px;
   height: 600px;
   border: 1px solid #000; }
 
