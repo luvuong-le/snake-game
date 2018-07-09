@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css?family=Chela+One);
 *,
 *::before,
 *::after {
@@ -7,6 +8,7 @@
 
 html,
 body {
+  font-family: 'Chela One', cursive;
   height: 100%; }
 
 .game_container {
@@ -17,11 +19,8 @@ body {
   font-size: 2em; }
 
 .game_container__gameboard {
-  background: lightgreen;
+  background: #000;
   width: 600px;
   height: 600px;
   border: 1px solid #000; }
-  .game_container__gameboard-score {
-    font-weight: bold;
-    z-index: 1; }
 

@@ -1,10 +1,18 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const BrowserSyncPlugin = require("browser-sync-webpack-plugin");
 
 module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: "../css/main.css",
+        }),
+        new BrowserSyncPlugin({
+            host: 'localhost',
+            port: 3000,
+            server: {
+                baseDir: "./"
+            }
         })
     ],
 

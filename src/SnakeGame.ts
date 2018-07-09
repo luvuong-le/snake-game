@@ -4,7 +4,6 @@ import '../src/scss/main.scss';
 
 class SnakeGame {
 
-    score: HTMLElement;
     snakeBoard: SnakeBoard;
     gameOver: boolean;
     gameTracker: any;
@@ -12,14 +11,9 @@ class SnakeGame {
 
     constructor () {
         this.snakeBoard = new SnakeBoard();
-        this.score = <HTMLElement> document.getElementById("score"),
         this.gameOver = false;
         this.gameTracker = null;
         this.keyPressed = false;
-    }
-
-    e: {
-        
     }
 
     addListeners() {
@@ -70,9 +64,6 @@ class SnakeGame {
 
     init() {
         this.gameTracker = setInterval(() => {
-            // Update Score
-            this.score.textContent = `Score: ${this.snakeBoard.score}`;
-
             if (!this.snakeBoard.checkBoundaries()) {
                 if (this.snakeBoard.snake.collided) {
                     this.gameOver = true;

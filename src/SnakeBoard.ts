@@ -1,5 +1,5 @@
 import constants from './constants';
-import { random } from './util';
+import { random, count, easeOut } from './util';
 import SnakePiece from './SnakePiece';
 import Snake from './Snake';
 
@@ -18,16 +18,24 @@ export default class SnakeBoard {
 	
 	gameboard: HTMLCanvasElement;
 	snake: Snake;
+	previousScore: number;
 	score: number;
+	scoreElement: HTMLElement;
 	board: SnakeBoardInterface;
 	context: CanvasRenderingContext2D;
 	boardInterval: any;
 	food: Array<SnakeFood>;
 
 	constructor () {
+		this.scoreElement = <HTMLElement>document.getElementById("score"),
 		this.gameboard = <HTMLCanvasElement> document.getElementById('gameboard');
 		this.food = [];
+		this.previousScore = 0;
 		this.score = 0;
+	}
+
+	updateScore() {
+		count(this.scoreElement, this.previousScore, this.score, 10, false);
 	}
     
 	createSnakePiece(x, y) {
@@ -106,6 +114,7 @@ export default class SnakeBoard {
 	}
 
 	setGameContext() {
+		this.scoreElement.textContent = "0";
         this.context = this.gameboard.getContext('2d');
         this.board = {
             XBoundary: this.gameboard.width,
@@ -125,8 +134,10 @@ export default class SnakeBoard {
 				this.food = [];
 				this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
 				clearInterval(this.boardInterval);
-				this.snake.speed -= 2;
-				this.score += 50;
+				this.snake.speed -= constants.SPEED_DECREMENT;
+				this.previousScore = this.score;
+				this.score += constants.SCORE_DECREMENT;
+				this.updateScore();
 				this.setBoardInterval();
 			}
 			if (this.outOfBoardX()) {

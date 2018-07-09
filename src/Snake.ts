@@ -136,14 +136,14 @@ export default class Snake {
         if (this.currentDirection === "RIGHT") {
             // this.body.forEach((snake) => snake.x = 0);
             for (let i = 0; i < this.body.length; i++) {
-                this.body[0].x = 0 - (20 * i);
+                this.body[0].x = 0 - (constants.SNAKE_SIZE * i);
             }
         }
 
         if (this.currentDirection === "LEFT") {
             // this.body.forEach(snake => snake.x = 600);
             for (let i = 0; i < this.body.length; i++) {
-                this.body[0].x = 600 + (20 * i);
+                this.body[0].x = 600 + (constants.SNAKE_SIZE * i);
             } 
         }
     }
@@ -152,14 +152,14 @@ export default class Snake {
         if (this.currentDirection === "DOWN") {
             // this.body.forEach((snake) => snake.y = 0);
             for (let i = 0; i < this.body.length; i++) {
-                this.body[0].y = 0 - (20 * i);
+                this.body[0].y = 0 - (constants.SNAKE_SIZE * i);
             }
         }
 
         if (this.currentDirection === "UP") {
             // this.body.forEach(snake => snake.y = 600);
             for (let i = 0; i < this.body.length; i++) {
-                this.body[0].y = 600 + (20 * i);
+                this.body[0].y = 600 + (constants.SNAKE_SIZE * i);
             }
         }
     }
