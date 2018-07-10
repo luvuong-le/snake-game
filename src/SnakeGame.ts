@@ -23,27 +23,38 @@ class SnakeGame {
             this.keyPressed = true; 
 
             if (!this.snakeBoard.checkBoundaries()) {
-                setTimeout(() => this.snakeBoard.snake.changingDirection = false, 80);
+                if (this.snakeBoard.snake.changingDirection) return;
+
+                this.snakeBoard.snake.changingDirection = true;
+
                 switch (e.keyCode) {
                     case constants.RIGHT_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== constants.LEFT) {
+                        if (this.snakeBoard.snake.currentDirection === constants.UP || this.snakeBoard.snake.currentDirection === constants.DOWN) {
+                            this.snakeBoard.snake.dx = constants.SNAKE_SIZE;
+                            this.snakeBoard.snake.dy = 0;
                             this.snakeBoard.snake.updateDirection(constants.RIGHT);
                         }
                         break;
                     case constants.LEFT_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== constants.RIGHT) {
-                            this.snakeBoard.snake.updateDirection(constants.LEFT);
+                        if (this.snakeBoard.snake.currentDirection === constants.UP || this.snakeBoard.snake.currentDirection === constants.DOWN) {
+							this.snakeBoard.snake.dx = -constants.SNAKE_SIZE;
+							this.snakeBoard.snake.dy = 0;
+							this.snakeBoard.snake.updateDirection(constants.LEFT);
 						}
                         break;
                     case constants.DOWN_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== constants.UP) {
-                            this.snakeBoard.snake.updateDirection(constants.DOWN);
-                        }
+                        if (this.snakeBoard.snake.currentDirection === constants.LEFT || this.snakeBoard.snake.currentDirection === constants.RIGHT) {
+							this.snakeBoard.snake.dx = 0;
+							this.snakeBoard.snake.dy = constants.SNAKE_SIZE;
+							this.snakeBoard.snake.updateDirection(constants.DOWN);
+						}
                         break;
                     case constants.UP_KEY:
-                        if (this.snakeBoard.snake.currentDirection !== constants.DOWN) {
-                            this.snakeBoard.snake.updateDirection(constants.UP);
-                        }
+                        if (this.snakeBoard.snake.currentDirection === constants.LEFT || this.snakeBoard.snake.currentDirection === constants.RIGHT) {
+							this.snakeBoard.snake.dx = 0;
+							this.snakeBoard.snake.dy = -constants.SNAKE_SIZE;
+							this.snakeBoard.snake.updateDirection(constants.UP);
+						}
                         break;
                 }
             }
@@ -55,18 +66,23 @@ class SnakeGame {
     gameFinish() {
         clearInterval(this.snakeBoard.boardInterval);
         clearInterval(this.snakeBoard.snake.moveInterval);
-        clearInterval(this.gameTracker);
+        alert('Game Over, Refresh to play again');
     }
 
     init() {
-        this.gameTracker = setInterval(() => {
-            if (!this.snakeBoard.checkBoundaries()) {
-                if (this.snakeBoard.snake.collided) {
-                    this.gameOver = true;
-                    this.gameFinish();
-                }
+        if (!this.snakeBoard.checkBoundaries()) {
+            if (this.snakeBoard.snake.collided) {
+                this.gameOver = true;
             }
-        }, this.snakeBoard.snake.speed);
+
+            if (this.gameOver) {
+                return this.gameFinish();
+            }
+        }
+        setTimeout(() => {
+			this.snakeBoard.snake.changingDirection = false;
+			this.init();
+		}, this.snakeBoard.snake.speed);
     }
 
     start() {

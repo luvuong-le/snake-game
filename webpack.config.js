@@ -24,7 +24,7 @@ module.exports = {
         filename: "bundle.js",
         path: path.resolve(__dirname, "./dist/js")
     },
-    mode: 'development',
+    mode: 'production',
 
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx']
@@ -40,7 +40,7 @@ module.exports = {
                 {
                     loader: 'css-loader',
                     options: {
-                        minimize: false
+                        minimize: true
                     }
                 },
                 "sass-loader"

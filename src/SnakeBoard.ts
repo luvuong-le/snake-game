@@ -22,25 +22,34 @@ export default class SnakeBoard {
 	score: number;
 	scoreElement: HTMLElement;
 	board: SnakeBoardInterface;
-	context: CanvasRenderingContext2D;
 	boardInterval: any;
+	context: CanvasRenderingContext2D;
 	food: Array<SnakeFood>;
 
 	constructor () {
 		this.scoreElement = <HTMLElement>document.getElementById("score"),
 		this.gameboard = <HTMLCanvasElement> document.getElementById('gameboard');
 		this.food = [];
+		this.boardInterval = null;
 		this.previousScore = 0;
 		this.score = 0;
 	}
 
 	updateScore() {
+		this.previousScore = this.score;
+		this.score += constants.SCORE_DECREMENT;
 		count(this.scoreElement, this.previousScore, this.score, 10, false);
 	}
-    
-	createSnakePiece(x, y) {
-		return new SnakePiece(x, y);
+
+	updateSpeed() {
+		if (this.snake.speed > 25) {
+			this.snake.speed -= constants.SPEED_DECREMENT;
+		}
 	}
+    
+	createSnakePiece(x, y) { return new SnakePiece(x, y); }
+
+	createFoodPiece(food) { return new SnakePiece(food.x, food.y); }
 
 	repaintElements() {
 		this.clearCanvas();
@@ -56,6 +65,7 @@ export default class SnakeBoard {
 		this.context.fillStyle = color;
 		this.context.strokeStyle = constants.STROKE_COLOR;
 		this.context.fillRect(snake.x, snake.y, snake.width, snake.height);
+		this.context.strokeRect(snake.x, snake.y, snake.width, snake.height);
     }
     
 	clearCanvas() {
@@ -109,20 +119,28 @@ export default class SnakeBoard {
 		return (this.snake.body[0].x === this.food[0].x && this.snake.body[0].y === this.food[0].y) ? true : false;
 	}
 
-	updateFoodPiece() {
-		this.context.clearRect(this.food[0].x, this.food[0].y, constants.SNAKE_PIECE_WIDTH, constants.SNAKE_PIECE_WIDTH);
-		this.snake.appendFood({ x: this.food[0].x, y: this.food[0].y });
-		this.food = [];
-		this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
-		clearInterval(this.boardInterval);
-		this.previousScore = this.score;
-		this.snake.speed -= constants.SPEED_DECREMENT;
-		this.score += constants.SCORE_DECREMENT;
-		this.updateScore();
-		this.setBoardInterval();
+	returnRandomXY() {
+		const newFood = {
+			x: random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH),
+			y: random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)
+		} 
+
+		return (!this.snake.checkExists(newFood)) ? newFood : this.returnRandomXY();
 	}
 
-	setBoardInterval() {
+	updateFoodPiece() {
+		this.context.clearRect(this.food[0].x, this.food[0].y, constants.SNAKE_PIECE_WIDTH, constants.SNAKE_PIECE_WIDTH);
+		this.repaintElements();
+		this.snake.appendFood({ x: this.food[0].x, y: this.food[0].y });
+		this.food = [];
+		this.food.unshift(this.createFoodPiece(this.returnRandomXY()));
+		clearInterval(this.boardInterval);
+		this.updateSpeed();
+		this.updateScore();
+		this.updateBoard();
+	}
+
+	updateBoard() {
 		this.boardInterval = setInterval(() => {
 			if (this.checkFoodCollision()) {
 				this.updateFoodPiece();
@@ -141,13 +159,13 @@ export default class SnakeBoard {
 
 	createSnake() {
 		this.snake = new Snake();
-		this.snake.setMoveInterval(this.snake.moveForward.bind(this.snake));
+		this.snake.setMoveInterval(this.snake.move.bind(this.snake));
 		this.createSnakeFood();
-		this.setBoardInterval();
+		this.updateBoard();
 	}
 
 	createSnakeFood() {
-		return this.food.unshift(this.createSnakePiece(random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH), random(this.gameboard.width - constants.SNAKE_PIECE_WIDTH)));
+		return this.food.unshift(this.createFoodPiece(this.returnRandomXY()));
 	}
 
 	init() {

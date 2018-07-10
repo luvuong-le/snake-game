@@ -6,21 +6,25 @@ interface SnakeBody {
 export default class Snake {
 
     body: Array<SnakeBody>
+    food: Array<SnakeBody>;
     currentDirection: string
     moveInterval: any
     collided: boolean;
     changingDirection: boolean;
-    food: Array<SnakeBody>;
     speed: number;
+    dx: number;
+    dy: number;
 
     constructor() {
-        this.body = [{ x: 0, y: 160 }];
+        this.body = [{ x: 20, y: 160 }, { x: 0, y: 160 }];
+        this.food = [];
         this.currentDirection = constants.CURRENT_DIRECTION;
         this.moveInterval = null;
         this.collided = false;        
         this.changingDirection = false;
-        this.food = [];
         this.speed = 85;
+        this.dx = 20;
+        this.dy = 0;
     }
 
     setMoveInterval(moveFunction) {
@@ -39,33 +43,22 @@ export default class Snake {
         }
     }
 
+    checkExists(food) {
+        return this.body.some(snakePiece => {
+            return food.x === snakePiece.x && food.y === snakePiece.y;
+        });
+    }
+
     appendFood(food) {
         this.body.unshift(food);
     }
 
     updateDirection(direction) {
-        if (this.changingDirection) return;
-
-        this.changingDirection = true;
-
-        clearInterval(this.moveInterval);
-
         this.currentDirection = direction;
 
-        switch (direction) {
-            case constants.RIGHT:
-				this.setMoveInterval(this.moveForward.bind(this));
-				break;
-			case constants.LEFT:
-				this.setMoveInterval(this.moveBackward.bind(this));
-				break;
-            case constants.DOWN:
-				this.setMoveInterval(this.moveForwardY.bind(this));
-				break;
-            case constants.UP:
-				this.setMoveInterval(this.moveBackwardY.bind(this));
-				break;
-		}
+        clearInterval(this.moveInterval);
+        
+        this.setMoveInterval(this.move.bind(this));
     }
 
     incrementBody(head) {
@@ -74,39 +67,10 @@ export default class Snake {
 		this.checkCollision();
     }
 
-    moveForward() {
+    move() {
         this.incrementBody({
-            x: this.body[0].x + constants.SNAKE_PIECE_WIDTH,
-            y: this.body[0].y
-        });
-    }
-
-    moveBackward() {
-        if (this.currentDirection !== constants.LEFT) {
-            this.currentDirection = constants.LEFT;
-            this.body.reverse();
-        }
-        this.incrementBody({
-            x: this.body[0].x - constants.SNAKE_PIECE_WIDTH,
-            y: this.body[0].y
-        });
-    }
-
-    moveForwardY() {
-        this.incrementBody({
-            x: this.body[0].x,
-            y: this.body[0].y + constants.SNAKE_PIECE_WIDTH
-        });
-    }
-
-    moveBackwardY() {
-        if (this.currentDirection !== constants.UP) {
-			this.currentDirection = constants.UP;
-			this.body.reverse();
-		}
-        this.incrementBody({
-            x: this.body[0].x,
-            y: this.body[0].y - constants.SNAKE_PIECE_WIDTH
+            x: this.body[0].x + this.dx,
+            y: this.body[0].y + this.dy
         });
     }
 
