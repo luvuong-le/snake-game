@@ -159,7 +159,7 @@ export default class SnakeBoard {
 
 	createSnake() {
 		this.snake = new Snake();
-		this.snake.setMoveInterval(this.snake.move.bind(this.snake));
+		this.snake.start();
 		this.createSnakeFood();
 		this.updateBoard();
 	}

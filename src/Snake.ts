@@ -27,9 +27,9 @@ export default class Snake {
         this.dy = 0;
     }
 
-    setMoveInterval(moveFunction) {
+    start() {
         this.moveInterval = setInterval(() => {
-            moveFunction();
+            this.move();
         }, this.speed);
     }
 
@@ -55,10 +55,6 @@ export default class Snake {
 
     updateDirection(direction) {
         this.currentDirection = direction;
-
-        clearInterval(this.moveInterval);
-        
-        this.setMoveInterval(this.move.bind(this));
     }
 
     incrementBody(head) {
