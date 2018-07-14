@@ -135,7 +135,9 @@ export default class SnakeBoard {
 		this.food = [];
 		this.food.unshift(this.createFoodPiece(this.returnRandomXY()));
 		clearInterval(this.boardInterval);
+		clearInterval(this.snake.moveInterval);
 		this.updateSpeed();
+		this.snake.start();
 		this.updateScore();
 		this.updateBoard();
 	}
