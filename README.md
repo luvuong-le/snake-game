@@ -1,5 +1,7 @@
 # 🐍 Snake Game 🐍
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 ## Project Information
 
 Recreation of the old school snake games once on the flip phones and is an old classic game. Created using HTML5 Canvas and Typescript
