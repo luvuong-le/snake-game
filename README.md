@@ -4,7 +4,7 @@
 
 Recreation of the old school snake games once on the flip phones and is an old classic game. Created using HTML5 Canvas and Typescript
 
-![Snake Demo](./src/game_images/snake-demo.gif)
+![Snake Demo](./src/game_images/snake-game.gif)
 
 #### Tech Stack
 
