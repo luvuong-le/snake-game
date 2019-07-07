@@ -1,2 +1,2 @@
 @import url(https://fonts.googleapis.com/css?family=Chela+One);
-*,:after,:before{margin:0;padding:0;box-sizing:border-box}body,html{font-family:Chela One,cursive;height:100%}.game_container{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2em}.game_container__gameboard{background:#000;width:600px;max-width:600px;height:600px;border:1px solid #000}
+*,:after,:before{margin:0;padding:0;box-sizing:border-box}body,html{font-family:Chela One,cursive;height:100%}.game_container{position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);font-size:2em}.game_container__gameboard{background:#000;width:600px;max-width:600px;height:600px;border:1px solid #000}
